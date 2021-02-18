@@ -1,6 +1,6 @@
 # Backend take home assignment for sproul.club - Spring 2021
 
-## Due Date: Saturday, 2/20 11:59 AM PST (Noon)
+## Due Date: Sunday, 2/21 11:59 AM PST (Noon)
 
 <!-- MarkdownTOC autolink="true" -->
 
