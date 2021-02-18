@@ -1,0 +1,27 @@
+[
+    {
+        "id": 1,
+        "name": "Effective C++",
+        "author": "Scott Meyers"
+    },
+    {
+        "id": 2,
+        "name": "Pattern Recognition and Machine Learning",
+        "author": "Christopher Bishop"
+    },
+    {
+        "id": 3,
+        "name": "The Hitchhiker's Triology: Omnibus Edition",
+        "author": "Douglas Adams"
+    },
+    {
+        "id": 4,
+        "name": "Ender's Game",
+        "author": "Orson Scott Card"
+    },
+    {
+        "id": 5,
+        "name": "Harry Potter and the Chamber of Secrets",
+        "author": "J. K. Rowling"
+    }
+]
