@@ -83,9 +83,6 @@ def get_student_textbooks():
     email = request_data['email']
     password = request_data['password']
 
-    if email is None or password is None:
-        return flask.jsonify({"message": "request does not contain either email or password"})
-
     student = database.db['students'].find_one({"email": email, "password": password})
 
     if student is None:
