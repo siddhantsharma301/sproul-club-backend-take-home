@@ -26,7 +26,7 @@ The API should be able to do the following:
   * Let the student fetch their list of textbooks
   * Let the student add/remove more textbooks from a read-only collection of textbooks
 * **Easy sharing**
-  * Let the student share a barcode that links to their collection of textbooks.
+  * Let the student share a QR code that embeds a link to their collection of textbooks.
   * This link will not expire and should return a list of the textbook names *only*.
 
 Along with that, the API itself should follow the recommended guidelines:
