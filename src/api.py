@@ -80,6 +80,8 @@ JSON response with textbooks
 def get_student_textbooks():
     # Verify credentials, throw error as required
     request_data = flask.request.get_json()
+    if request_data is None or request_data['email'] is None or request_data['password'] is None:
+        return flask.jsonify({"message": "missing parameters, try again"})
     email = request_data['email']
     password = request_data['password']
 
@@ -119,6 +121,9 @@ Params:
 def add_textbook_to_student():
     # Verify credentials, throw error as required
     request_data = flask.request.get_json()
+    if request_data is None or request_data['email'] is None or request_data['password'] is None \
+        or request_data["textbook_id"] is None:
+        return flask.jsonify({"message": "missing parameters, try again"})
     email = request_data['email']
     password = request_data['password']
     textbook_id = request_data['id']
@@ -162,6 +167,9 @@ Params:
 def remove_textbook_from_student():
     # Verify credentials, throw error as required
     request_data = flask.request.get_json()
+    if request_data is None or request_data['email'] is None or request_data['password'] is None \
+        or request_data["textbook_id"] is None:
+        return flask.jsonify({"message": "missing parameters, try again"})
     email = request_data['email']
     password = request_data['password']
     textbook_id = request_data['id']
@@ -205,6 +213,8 @@ QR Code (in base64 format for JSON response)
 def generate_qrcode():
     # Verify credentials, throw error as required
     request_data = flask.request.get_json()
+    if request_data is None or request_data['email'] is None or request_data['password'] is None:
+        return flask.jsonify({"message": "missing parameters, try again"})
     email = request_data['email']
     password = request_data['password']
 
