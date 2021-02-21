@@ -70,8 +70,6 @@ Params:
         student's email
     password: str
         student's password
-    db: Database
-        database with students and textbooks
 
 Returns:
 JSON response with textbooks
@@ -112,10 +110,8 @@ Params:
         student's email 
     password: str
         student's password
-    id: int
+    textbook_id: int
         textbook's id
-    db: Database
-        database with students and textbook
 """
 @app.route('/api/add-textbook-students', methods=['PATCH'])
 def add_textbook_to_student():
@@ -126,7 +122,7 @@ def add_textbook_to_student():
         return flask.jsonify({"message": "missing parameters, try again"})
     email = request_data['email']
     password = request_data['password']
-    textbook_id = request_data['id']
+    textbook_id = request_data['textbook_id']
 
     student = database.db['students'].find_one({"email": email, "password": password})
 
@@ -135,6 +131,7 @@ def add_textbook_to_student():
     if not database.db['textbooks'].find_one({"id": textbook_id}):
         return flask.jsonify({"message": "database does not contain requested id"})
 
+    # Add textbook if it doesn't exist in student's list already
     if textbook_id not in student['textbooks']:
         lst = student["textbooks"] + [textbook_id]
         lst.sort()
@@ -158,10 +155,8 @@ Params:
         student's email 
     password: str
         student's password
-    id: int
+    textbook_id: int
         textbook's id
-    db: Database
-        database with students and textbook
 """
 @app.route('/api/remove-textbook-students', methods=['PATCH'])
 def remove_textbook_from_student():
@@ -172,7 +167,7 @@ def remove_textbook_from_student():
         return flask.jsonify({"message": "missing parameters, try again"})
     email = request_data['email']
     password = request_data['password']
-    textbook_id = request_data['id']
+    textbook_id = request_data['textbook_id']
 
     student = database.db['students'].find_one({"email": email, "password": password})
 
@@ -181,6 +176,7 @@ def remove_textbook_from_student():
     if not database.db['textbooks'].find_one({"id": textbook_id}):
         return flask.jsonify({"message": "database does not contain requested id"})
 
+    # Remove textbook if in student's list already
     if textbook_id in student['textbooks']:
         lst = student["textbooks"]
         lst.remove(textbook_id)
@@ -241,6 +237,10 @@ def generate_qrcode():
 
 """
 A page to host what textbooks a given student has
+
+Params:
+    name: str
+        name of student
 """
 @app.route('/<name>-textbooks', methods=['GET'])
 def create_textbook_list(name):
