@@ -28,6 +28,7 @@ if 'sproulclub' not in client.list_database_names():
     with open(DB_PATH + 'students.json') as file:
         file_data = json.load(file)
     students.insert_many(file_data)
+
 else:
     database = client['sproulclub']
 
@@ -133,6 +134,7 @@ def add_textbook_to_student():
         lst = student["textbooks"] + [textbook_id]
         lst.sort()
         replacement  = {
+            "name": student["name"],
             "email": student["email"],
             "password": student["password"],
             "textbooks": lst
@@ -175,6 +177,7 @@ def remove_textbook_from_student():
         lst = student["textbooks"]
         lst.remove(textbook_id)
         replacement  = {
+            "name": student["name"],
             "email": student["email"],
             "password": student["password"],
             "textbooks": lst
@@ -211,19 +214,35 @@ def generate_qrcode():
         return flask.jsonify({"message": "student credentials not found"})
 
     # Create string of textbooks
-    books = ""
-    for book in student['textbooks']:
-        name = get_textbook_name(book)
-        if name is not None:
-            books += name + "\n"
+    # books = ""
+    # for book in student['textbooks']:
+    #     name = get_textbook_name(book)
+    #     if name is not None:
+    #         books += name + "\n"
 
     # Generate QR code and convert to string
-    qr = qrcode.make(books)
+    qr = qrcode.make("localhost/" + student['name'].replace(" ", "%20") + "-textbooks")
     with io.BytesIO() as out:
         qr.save(out, format="png")
         qr_string = base64.b64encode(out.getvalue()).decode('UTF-8')
-
+    create_textbook_list(student['name'])
     return flask.jsonify({"qrcode": qr_string})
+
+
+"""
+A page to host what textbooks a given student has
+"""
+@app.route('/<name>-textbooks', methods=['GET'])
+def create_textbook_list(name):
+    books = ""
+    student = database.db['students'].find_one({"name": name})
+    for book in student['textbooks']:
+        name = database.db['textbooks'].find_one({"id": book})["name"]
+        books += f"<li> {name} </li>"
+    return f"""
+        <h1> {name}'s Textbooks </h1>
+        <ul>
+    """ + books + "</ul>"
 
 
 """
@@ -238,6 +257,7 @@ Name of textbook as string
 """
 def get_textbook_name(id):
     return database.db['textbooks'].find_one({"id": id})['name']
+
 
 
 if __name__ == "__main__":
