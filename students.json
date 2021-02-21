@@ -1,0 +1,55 @@
+[
+    {
+        "name": "Oski Bear",
+        "email": "oski@berkeley.edu",
+        "password": "oskilovescal123",
+        "textbooks":
+            [
+                1,
+                3,
+                5
+            ]
+    },
+    {
+        "name": "Stanford Tree",
+        "email": "cardinal@stanford.edu",
+        "password": "cal>stanford",
+        "textbooks":
+            [
+                2,
+                4
+            ]
+    },
+    {
+        "name": "Joe Bruin",
+        "email": "joe@ucla.edu",
+        "password": "joebruin12345",
+        "textbooks":
+            [
+                "1",
+                "5"
+            ]
+    },
+    {
+        "name": "USC Mascot",
+        "email": "mascot@usc.edu",
+        "password": "fighton!",
+        "textbooks":
+            [
+                1,
+                3,
+                4
+            ]
+    },
+    {
+        "name": "Oregon Duck",
+        "email": "duck@oregon.edu",
+        "password": "oregonduck123",
+        "textbooks":
+            [
+                2,
+                3,
+                5
+            ]
+    }
+]
