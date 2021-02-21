@@ -48,7 +48,7 @@ def home():
         <h2> How it works </h2>
         I set up my REST API to take requests at the `/api/`. Credentials such as student
         email and password are passed in through JSON, which are verified against the student and
-        textbook collections in the MongoDB database. 
+        textbook collections in the MongoDB database. The endpoints were tested using Postman.
         <h2> API Endpoints </h2>
         <ul>
             <li> `/api/student-textbooks`: Fetch what textbooks a given student has. Need student's email and password </li>
@@ -83,12 +83,12 @@ def get_student_textbooks():
     password = request_data['password']
 
     if email is None or password is None:
-        return json.dumps({"error": "request does not contain either email or password"})
+        return flask.jsonify({"message": "request does not contain either email or password"})
 
     student = database.db['students'].find_one({"email": email, "password": password})
 
     if student is None:
-        return json.dumps({"error": "student credentials not found", "email": email, "password": password})
+        return flask.jsonify({"message": "student credentials not found"})
 
     # Create list of textbooks
     books = []
@@ -97,7 +97,7 @@ def get_student_textbooks():
         if name is not None:
             books.append(name)
 
-    return json.dumps({"textbooks": books})
+    return flask.jsonify({"textbooks": books})
 
 
 """ 
@@ -114,20 +114,34 @@ Params:
     db: Database
         database with students and textbook
 """
-@app.route('/api/add-textbook-students', methods=['PUT'])
+@app.route('/api/add-textbook-students', methods=['PATCH'])
 def add_textbook_to_student():
     # Verify credentials, throw error as required
-    email = request.args.get('email', None) 
-    password = request.args.get('password', None)
-    id = request.args.get('id', None)
+    request_data = flask.request.get_json()
+    email = request_data['email']
+    password = request_data['password']
+    textbook_id = request_data['id']
 
     student = database.db['students'].find_one({"email": email, "password": password})
 
     if student is None:
-        return json.dumps({"error": "student credentials not found"})
+        return flask.jsonify({"message": "student credentials not found"})
+    if not database.db['textbooks'].find_one({"id": textbook_id}):
+        return flask.jsonify({"message": "database does not contain requested id"})
 
-    if not student['textbooks'].contains(id) and database.db['textbooks'].find_one({"id": id}):
-        student['textbooks']
+    if textbook_id not in student['textbooks']:
+        lst = student["textbooks"] + [textbook_id]
+        lst.sort()
+        replacement  = {
+            "email": student["email"],
+            "password": student["password"],
+            "textbooks": lst
+        }
+        database.db['students'].replace_one({"email": email, "password": password}, replacement)
+        return flask.jsonify({"message": "textbook successfully added to student"})
+    else:
+        return flask.jsonify({"message": "student already has requested textbook"})
+
 
 
 """ 
@@ -143,20 +157,33 @@ Params:
     db: Database
         database with students and textbook
 """
-@app.route('/api/add-textbook-students', methods=['PUT'])
+@app.route('/api/remove-textbook-students', methods=['PATCH'])
 def remove_textbook_from_student():
     # Verify credentials, throw error as required
-    email = request.args.get('email', None) 
-    password = request.args.get('password', None)
-    id = request.args.get('id', None)
+    request_data = flask.request.get_json()
+    email = request_data['email']
+    password = request_data['password']
+    textbook_id = request_data['id']
 
     student = database.db['students'].find_one({"email": email, "password": password})
 
     if student is None:
-        return json.dumps({"error": "student credentials not found"})
+        return flask.jsonify({"message": "student credentials not found"})
+    if not database.db['textbooks'].find_one({"id": textbook_id}):
+        return flask.jsonify({"message": "database does not contain requested id"})
 
-    if not student['textbooks'].contains(id) and database.db['textbooks'].find_one({"id": id}):
-        student['textbooks']
+    if textbook_id in student['textbooks']:
+        lst = student["textbooks"]
+        lst.remove(textbook_id)
+        replacement  = {
+            "email": student["email"],
+            "password": student["password"],
+            "textbooks": lst
+        }
+        database.db['students'].replace_one({"email": email, "password": password}, replacement)
+        return flask.jsonify({"message": "textbook successfully removed from student"})
+    else:
+        return flask.jsonify({"message": "student does not have requested textbook"})
     
 
 """
@@ -182,7 +209,7 @@ def generate_qrcode():
     student = database.db['students'].find_one({"email": email, "password": password})
 
     if student is None:
-        return json.dumps({"error": "student credentials not found"})
+        return flask.jsonify({"message": "student credentials not found"})
 
     # Create string of textbooks
     books = ""
@@ -197,7 +224,7 @@ def generate_qrcode():
         qr.save(out, format="png")
         qr_string = base64.b64encode(out.getvalue()).decode('UTF-8')
 
-    return json.dumps({"qrcode": qr_string})
+    return flask.jsonify({"qrcode": qr_string})
 
 
 """
