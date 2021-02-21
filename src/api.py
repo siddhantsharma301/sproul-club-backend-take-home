@@ -143,7 +143,6 @@ def add_textbook_to_student():
         return flask.jsonify({"message": "student already has requested textbook"})
 
 
-
 """ 
 Remove given textbook into student's list, if is already in student's list
 

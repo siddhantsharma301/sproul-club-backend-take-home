@@ -11,9 +11,9 @@ This document contains assumptions that were made during the completion of this 
         "password": "hashed",
         "textbooks": 
             [
-                "1",
-                "2",
-                "3"
+                1,
+                2,
+                3
             ]
     }
     ```
